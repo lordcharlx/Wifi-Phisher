@@ -14,7 +14,6 @@ read -p "Enter the wlan interface (normally it's: wlan0): " WIFI_INTERFACE
 read -p "Enter the domain of the Captive-Portal (Example: \"login.com\" [! No Protocol:(\"http://\"])): " WIFI_DOMAIN
 read -p "Enter the username for your dashboard: " DASH_USER
 read -p "Enter the password for your dashboard: " DASH_PASS
-read -p "Add the Starter-Script to autostart (yes,no): " ADD_TO_STARTUP
 
 #Make www folder
 mkdir /WWW

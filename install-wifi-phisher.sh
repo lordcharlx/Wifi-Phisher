@@ -113,18 +113,18 @@ echo "driver=nl80211" >> hostapd.conf
 echo "ssid=$WIFI_NAME" >> hostapd.conf
 echo "channel=7" >> hostapd.conf
 
-#TODO: DOWNLOAD dhcpd config and put it to /etc/dhcp/dhcpd.conf
-wget -O dhcpd.conf !URL!
+#DOWNLOAD dhcpd config and put it to /etc/dhcp/dhcpd.conf
+wget -O dhcpd.conf https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Phisher/master/dhcpd.conf
 rm /etc/dhcp/dhcpd.conf
 mv dhcpd.conf /etc/dhcp/dhcpd.conf
 
-#TODO: Download Nginx config and put it to /Wifi-Attack/NginxConfig/nginx.conf
-wget -O nginx.conf !URL!
+#Download Nginx config and put it to /Wifi-Attack/NginxConfig/nginx.conf
+wget -O nginx.conf https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Phisher/master/nginx.conf
 rm /Wifi-Attack/NginxConfig/nginx.conf
 mv nginx.conf /Wifi-Attack/NginxConfig/nginx.conf
 
-#TODO: Download the starterscript and put it to /
-wget -O StartWifi.sh !URL!
+#Download the starterscript and put it to /
+wget -O StartWifi.sh https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Phisher/master/StartWifi.sh
 mv StartWifi.sh /
 chmod 777 /StartWifi.sh
 

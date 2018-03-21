@@ -14,6 +14,7 @@ read -p "Enter the wlan interface (normally it's: wlan0): " WIFI_INTERFACE
 read -p "Enter the domain of the Captive-Portal (Example: \"login.com\" [! No Protocol:(\"http://\"])): " WIFI_DOMAIN
 read -p "Enter the username for your dashboard: " DASH_USER
 read -p "Enter the password for your dashboard: " DASH_PASS
+read -p "Add the Starter-Script to autostart (yes,no): " ADD_TO_STARTUP
 
 #Make www folder
 mkdir /WWW
@@ -22,6 +23,8 @@ chown www-data:www-data -R /WWW
 #Make folder to hold the things
 mkdir /Wifi-Attack
 cd /Wifi-Attack
+#Make /Wifi-Attack/NginxConfig - folder
+mkdir NginxConfig
 
 #Write the interface to file
 echo "$WIFI_INTERFACE" > WifiInterface
@@ -31,6 +34,10 @@ echo "return 302 http://$WIFI_DOMAIN/;" > WifiDomain.conf
 apt update
 apt upgrade -y
 
+#Installing for add-apt-repository
+apt install software-properties-common python-software-properties -y
+
+
 #Download neccessary things
 apt install -y curl build-essential make gcc libpcre3 libpcre3-dev libpcre++-dev zlib1g-dev libbz2-dev libxslt1-dev libxml2-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libperl-dev libssl-dev libcurl4-openssl-dev
 
@@ -38,69 +45,60 @@ apt install -y curl build-essential make gcc libpcre3 libpcre3-dev libpcre++-dev
 wget -O nginx.tar.gz http://nginx.org/download/nginx-1.13.9.tar.gz
 tar -xvf nginx.tar.gz
 
-cd nginx
+cd nginx-1.13.9
 
-./configure --prefix=/etc/nginx \
-            --sbin-path=/usr/sbin/nginx \
-            --modules-path=/usr/lib/nginx/modules \
-            --conf-path=/Wifi-Attack/NginxConfig/nginx.conf \
-            --error-log-path=/var/log/nginx/error.log \
-            --http-log-path=/var/log/nginx/access.log \
-            --pid-path=/run/nginx.pid \
-            --lock-path=/var/lock/nginx.lock \
-            --user=www-data \
-            --group=www-data \
-            --build=Ubuntu \
-            --http-client-body-temp-path=/var/lib/nginx/body \
-            --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
-            --http-proxy-temp-path=/var/lib/nginx/proxy \
-            --http-scgi-temp-path=/var/lib/nginx/scgi \
-            --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
-            --with-openssl=../openssl-1.1.0f \
-            --with-openssl-opt=enable-ec_nistp_64_gcc_128 \
-            --with-openssl-opt=no-nextprotoneg \
-            --with-openssl-opt=no-weak-ssl-ciphers \
-            --with-openssl-opt=no-ssl3 \
-            --with-pcre=../pcre-8.40 \
-            --with-pcre-jit \
-            --with-zlib=../zlib-1.2.11 \
-            --with-compat \
-            --with-file-aio \
-            --with-threads \
-            --with-http_addition_module \
-            --with-http_auth_request_module \
-            --with-http_dav_module \
-            --with-http_flv_module \
-            --with-http_gunzip_module \
-            --with-http_gzip_static_module \
-            --with-http_mp4_module \
-            --with-http_random_index_module \
-            --with-http_realip_module \
-            --with-http_slice_module \
-            --with-http_ssl_module \
-            --with-http_sub_module \
-            --with-http_stub_status_module \
-            --with-http_v2_module \
-            --with-http_secure_link_module \
-            --with-mail \
-            --with-mail_ssl_module \
-            --with-stream \
-            --with-stream_realip_module \
-            --with-stream_ssl_module \
-            --with-stream_ssl_preread_module \
-            --with-debug \
-            --with-cc-opt='-g -O2 -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2' \
-            --with-ld-opt='-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now'
+#Configure nginx | Thanks to: https://www.linuxbabe.com/raspberry-pi/compile-nginx-source-raspbian-jessie
+./configure \
+--prefix=/etc/nginx                                                \
+--sbin-path=/usr/sbin/nginx                                        \
+--conf-path=/etc/nginx/nginx.conf                                  \
+--error-log-path=/var/log/nginx/error.log                          \
+--http-log-path=/var/log/nginx/access.log                          \
+--pid-path=/var/run/nginx.pid                                      \
+--lock-path=/var/run/nginx.lock                                    \
+--http-client-body-temp-path=/var/cache/nginx/client_temp          \
+--http-proxy-temp-path=/var/cache/nginx/proxy_temp                 \
+--http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp             \
+--http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp                 \
+--http-scgi-temp-path=/var/cache/nginx/scgi_temp                   \
+--user=nginx                                                       \
+--group=nginx                                                      \
+--with-http_ssl_module                                             \
+--with-http_realip_module                                          \
+--with-http_addition_module                                        \
+--with-http_sub_module                                             \
+--with-http_dav_module                                             \
+--with-http_flv_module                                             \
+--with-http_mp4_module                                             \
+--with-http_gunzip_module                                          \
+--with-http_gzip_static_module                                     \
+--with-http_random_index_module                                    \
+--with-http_secure_link_module                                     \
+--with-http_stub_status_module                                     \
+--with-http_auth_request_module                                    \
+--with-mail                                                        \
+--with-mail_ssl_module                                             \
+--with-file-aio                                                    \
+--with-http_v2_module                                              \
+--with-ipv6                                                        \
+--with-threads                                                     \
+--with-stream                                                      \
+--with-stream_ssl_module                                           \
+--with-http_slice_module
 
 make
 make install
 
-cd ..
+#Do some nginx-file-error prevention crap
+mkdir -p /var/cache/nginx/client_temp
+mkdir -p /etc/nginx/logs; touch /etc/nginx/logs/access.log;
+
+
+#Move back
+cd /Wifi-Attack
 
 # NGINX INSTALLED --> install PHP
-add-apt-repository ppa:ondrej/php -y
-apt update
-apt install php7.0* -y
+apt install php7.0 php7.0-fpm -y
 
 #Install dnsmasq + hostapd
 apt install dnsmasq isc-dhcp-server hostapd -y
@@ -128,4 +126,19 @@ wget -O StartWifi.sh https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Ph
 mv StartWifi.sh /
 chmod 777 /StartWifi.sh
 
+#Add the script to startup
+if [ "$ADD_TO_STARTUP" == "yes" ]
+then
+
+#Create startup script
+touch /etc/init.d/startwifi
+chmod 777 /etc/init.d/startwifi
+echo '#!/bin/bash' > /etc/init.d/startwifi
+echo "sudo /StartWifi.sh" >> /etc/init.d/startwifi
+#Create symlink
+ln -s /etc/init.d/startwifi /etc/rc.d/
+
+fi
+
 #TODO: DOwnload the Example PORTAL
+

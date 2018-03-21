@@ -142,3 +142,5 @@ fi
 
 #TODO: DOwnload the Example PORTAL
 
+#Reboot
+reboot

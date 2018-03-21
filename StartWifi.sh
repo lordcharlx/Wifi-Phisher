@@ -21,7 +21,7 @@ killall php-fpm7.0
 
 #Start things properly
 php-fpm7.0  #URL of sock is: /run/php/php7.0-fpm.sock
-nginx
+nginx -c /Wifi-Attack/NginxConfig/nginx.conf
 
 #Web server running
 

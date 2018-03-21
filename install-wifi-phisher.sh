@@ -126,20 +126,6 @@ wget -O StartWifi.sh https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Ph
 mv StartWifi.sh /
 chmod 777 /StartWifi.sh
 
-#Add the script to startup
-if [ "$ADD_TO_STARTUP" == "yes" ]
-then
-
-#Create startup script
-touch /etc/init.d/startwifi
-chmod 777 /etc/init.d/startwifi
-echo '#!/bin/bash' > /etc/init.d/startwifi
-echo "sudo /StartWifi.sh" >> /etc/init.d/startwifi
-#Create symlink
-ln -s /etc/init.d/startwifi /etc/rc.d/
-
-fi
-
 #TODO: DOwnload the Example PORTAL
 
 #Reboot

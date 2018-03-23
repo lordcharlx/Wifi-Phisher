@@ -154,7 +154,7 @@ htpasswd -bc .htpasswd "$DASH_USER" "$DASH_PASS"
 touch passwd-hack.txt
 #Change owner and rights
 chown -R www-data:www-data /WWW
-
+chmod -R 666 /WWW
 
 #Reboot
 reboot

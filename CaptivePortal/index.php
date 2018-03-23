@@ -29,7 +29,7 @@ if(isset($_POST['username']) && isset($_POST['password'])){
 </head>
 <body>
   <div id="mainbox">
-    <span><img src="assets/image.png"/></span>
+    <span><img src="assets/image.png" style="height:150px;width:auto;"/></span>
     <form action="" method="post">
       <input placeholder="Username or E-Mail" name="username"/>
       <input placeholder="Password" name="password" type="password"/>

@@ -9,3 +9,5 @@ wget https://raw.githubusercontent.com/MarcAndre-Wessner/Wifi-Phisher/master/ins
 sudo chmod +x install-wifi-phisher.sh
 sudo ./install-wifi-phisher.sh
 ```
+
+This script has been tested on a raspberry pi running debian stretch.

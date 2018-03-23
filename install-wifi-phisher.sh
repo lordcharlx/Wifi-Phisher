@@ -137,6 +137,7 @@ chmod 777 /etc/init.d/startwifi
 echo '#!/bin/bash' > /etc/init.d/startwifi
 echo "sudo /StartWifi.sh" >> /etc/init.d/startwifi
 update-rc.d startwifi defaults
+ln -s /etc/init.d/startwifi /etc/rc3.d/S99startwifi
 
 fi
 
